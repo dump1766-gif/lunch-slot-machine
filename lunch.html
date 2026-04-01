@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>午餐吃什麼拉霸機 🎰</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            padding: 50px; 
+            background-color: #f7f9fc; 
+        }
+        h1 { color: #333; }
+        /* 拉霸機結果顯示區 */
+        #slot-machine { 
+            font-size: 48px; 
+            font-weight: bold; 
+            color: #ff5722; 
+            margin: 30px 0; 
+            min-height: 60px; 
+        }
+        /* 按鈕樣式 */
+        button { 
+            font-size: 20px; 
+            padding: 12px 24px; 
+            background-color: #4CAF50; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+        button:hover { background-color: #45a049; }
+        button:disabled { background-color: #cccccc; cursor: not-allowed; }
+        /* 地圖按鈕樣式 (預設隱藏) */
+        #map-btn { 
+            display: none; 
+            margin-top: 20px; 
+            padding: 12px 24px;
+            background-color: #4285F4; 
+            color: white;
+            text-decoration: none; 
+            border-radius: 8px;
+            font-size: 18px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+        #map-btn:hover { background-color: #357ae8; }
+    </style>
+</head>
+<body>
+
+    <h1>🎰 午餐吃什麼拉霸機</h1>
+    <div id="slot-machine">❓ 等待抽籤</div>
+    
+    <button id="spin-btn" onclick="startSpin()">開始抽籤</button>
+    <br>
+    <a id="map-btn" href="#" target="_blank">在地圖上尋找</a>
+
+    <script>
+        // 1. 全新的食物清單 (已替換並補上對應 Emoji)
+        const foods = [
+            '拉麵 🍜', '牛排 🥩', '小籠包 🥟', '健康餐盒 🥗', '咖哩飯 🍛', '水餃 🥟', 
+            '漢堡 🍔', '義大利麵 🍝', '燒肉 🥓', '壽司 🍣', '手搖飲 🧋', '麵包 🥐', 
+            '飯糰 🍙', '咖啡 ☕', '甜甜圈 🍩', '便當 🍱'
+        ];
+        
+        let spinInterval;
+
+        function startSpin() {
+            const slot = document.getElementById('slot-machine');
+            const mapBtn = document.getElementById('map-btn');
+            const spinBtn = document.getElementById('spin-btn');
+
+            // 開始轉動時，隱藏地圖按鈕，並鎖定抽籤按鈕防止連點
+            mapBtn.style.display = 'none';
+            spinBtn.disabled = true;
+
+            let counter = 0;
+            // 2. 產生拉霸滾動動畫 (每 0.1 秒換一次字)
+            spinInterval = setInterval(() => {
+                slot.innerText = foods[Math.floor(Math.random() * foods.length)];
+                counter++;
+                // 轉動約 20 次後停止 (約 2 秒)
+                if (counter > 20) {
+                    clearInterval(spinInterval);
+                    stopSpin();
+                }
+            }, 100);
+        }
+
+        function stopSpin() {
+            const slot = document.getElementById('slot-machine');
+            const mapBtn = document.getElementById('map-btn');
+            const spinBtn = document.getElementById('spin-btn');
+
+            // 3. 決定最終抽籤結果
+            const finalFood = foods[Math.floor(Math.random() * foods.length)];
+            slot.innerText = finalFood;
+
+            // 4. 提取純文字 (把 Emoji 切掉，例如把 "漢堡 🍔" 變成 "漢堡")
+            // 這樣傳給 Google Maps 搜尋才會精準
+            const searchQuery = finalFood.split(' ')[0];
+
+            // 5. 組合 Google Maps 萬用搜尋網址
+            // 使用正確的 Maps 搜尋 API 格式，並對關鍵字進行 URL 編碼
+            const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
+
+            // 6. 更新地圖按鈕的連結與文字，並將其顯示出來
+            mapBtn.href = mapUrl;
+            mapBtn.innerText = `🗺️ 點我尋找附近的「${searchQuery}」`;
+            mapBtn.style.display = 'inline-block';
+
+            // 解除鎖定抽籤按鈕
+            spinBtn.disabled = false;
+        }
+    </script>
+</body>
+</html>
