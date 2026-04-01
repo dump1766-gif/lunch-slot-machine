@@ -59,7 +59,7 @@
     <a id="map-btn" href="#" target="_blank">在地圖上尋找</a>
 
     <script>
-        // 1. 全新的食物清單 (已替換並補上對應 Emoji)
+        // 食物清單
         const foods = [
             '拉麵 🍜', '牛排 🥩', '小籠包 🥟', '健康餐盒 🥗', '咖哩飯 🍛', '水餃 🥟', 
             '漢堡 🍔', '義大利麵 🍝', '燒肉 🥓', '壽司 🍣', '手搖飲 🧋', '麵包 🥐', 
@@ -73,16 +73,13 @@
             const mapBtn = document.getElementById('map-btn');
             const spinBtn = document.getElementById('spin-btn');
 
-            // 開始轉動時，隱藏地圖按鈕，並鎖定抽籤按鈕防止連點
             mapBtn.style.display = 'none';
             spinBtn.disabled = true;
 
             let counter = 0;
-            // 2. 產生拉霸滾動動畫 (每 0.1 秒換一次字)
             spinInterval = setInterval(() => {
                 slot.innerText = foods[Math.floor(Math.random() * foods.length)];
                 counter++;
-                // 轉動約 20 次後停止 (約 2 秒)
                 if (counter > 20) {
                     clearInterval(spinInterval);
                     stopSpin();
@@ -95,24 +92,19 @@
             const mapBtn = document.getElementById('map-btn');
             const spinBtn = document.getElementById('spin-btn');
 
-            // 3. 決定最終抽籤結果
             const finalFood = foods[Math.floor(Math.random() * foods.length)];
             slot.innerText = finalFood;
 
-            // 4. 提取純文字 (把 Emoji 切掉，例如把 "漢堡 🍔" 變成 "漢堡")
-            // 這樣傳給 Google Maps 搜尋才會精準
+            // 提取純文字，去除 Emoji
             const searchQuery = finalFood.split(' ')[0];
 
-            // 5. 組合 Google Maps 萬用搜尋網址
-            // 使用正確的 Maps 搜尋 API 格式，並對關鍵字進行 URL 編碼
-            const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
+            // 使用標準 Google Maps 搜尋網址，並加上 zoom=15 來限制視野大約在 1~2 公里內
+            const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}&zoom=15`;
 
-            // 6. 更新地圖按鈕的連結與文字，並將其顯示出來
             mapBtn.href = mapUrl;
             mapBtn.innerText = `🗺️ 點我尋找附近的「${searchQuery}」`;
             mapBtn.style.display = 'inline-block';
 
-            // 解除鎖定抽籤按鈕
             spinBtn.disabled = false;
         }
     </script>
